@@ -21,11 +21,10 @@ const (
 
 // Errors
 var (
-	ErrNoFilepath            = errors.New("Filepath is empty")
-	ErrPrvKeyNotInitiated    = errors.New("Private key is not initiated")
-	ErrPubKeyNotInitiated    = errors.New("Public key is not initiated")
-	ErrTokenAudienceNotMatch = errors.New("Audience claim in the token does not match the expected value")
-	ErrTokenIssuerNotMatch   = errors.New("Issuer claim in the token does not match the expected value")
+	ErrNoFilepath         = errors.New("Filepath is empty")
+	ErrPrvKeyNotInitiated = errors.New("Private key is not initiated")
+	ErrPubKeyNotInitiated = errors.New("Public key is not initiated")
+	ErrInvalidToken       = errors.New("Token is invalid")
 )
 
 // Keys
@@ -84,10 +83,10 @@ func getPublicKey(filepath string) (interface{}, error) {
 	return x509.ParsePKCS1PublicKey(keyPem.Bytes)
 }
 
-// CreateToken creates JWT signed token string
+// Create creates JWT signed token string
 //
 // "expIn" is a string as in time.ParseDuration: e.g. 1h, 10m, 1.5s, -300ms, 1h20m
-func CreateToken(sub, aud, expIn string) (string, error) {
+func Create(sub, aud, expIn string) (string, error) {
 	// Check private key
 	if prvKey == nil {
 		return "", ErrPrvKeyNotInitiated
@@ -123,8 +122,8 @@ func CreateToken(sub, aud, expIn string) (string, error) {
 	return signedToken, nil
 }
 
-// VerifyToken parses/verifies JWT and returns subject
-func VerifyToken(tokenString string, aud string) (sub string, err error) {
+// Verify parses/verifies JWT and returns subject
+func Verify(tokenString string, aud string) (sub string, err error) {
 	// Check public key
 	if pubKey == nil {
 		return "", ErrPubKeyNotInitiated
@@ -140,14 +139,8 @@ func VerifyToken(tokenString string, aud string) (sub string, err error) {
 	sub = claims.Subject
 
 	// Verify claims
-	if err != nil {
-		return sub, err
-	}
-	if !claims.VerifyAudience(aud, true) {
-		return sub, ErrTokenAudienceNotMatch
-	}
-	if !claims.VerifyIssuer(TokenIssuer, true) {
-		return sub, ErrTokenIssuerNotMatch
+	if err != nil || !claims.VerifyAudience(aud, true) || !claims.VerifyIssuer(TokenIssuer, true) {
+		return sub, ErrInvalidToken
 	}
 	return sub, nil
 }

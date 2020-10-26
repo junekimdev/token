@@ -81,24 +81,24 @@ func TestGetPublicKeyFalse(t *testing.T) {
 	}
 }
 
-func TestCreateToken(t *testing.T) {
+func TestCreate(t *testing.T) {
 	teardown := testSetup(t)
 	defer teardown()
 
 	sub := GetSubject("127.0.0.1", "clientId")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	_, err := CreateToken(sub, aud, expIn)
+	_, err := Create(sub, aud, expIn)
 	if err != nil {
 		t.Errorf("Failed to create Token: %v", err)
 	}
 }
 
-func TestCreateTokenBeforeInit(t *testing.T) {
+func TestCreateBeforeInit(t *testing.T) {
 	sub := GetSubject("127.0.0.1", "clientId")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	_, err := CreateToken(sub, aud, expIn)
+	_, err := Create(sub, aud, expIn)
 	if err == nil {
 		t.Error("want error but got nothing")
 	} else {
@@ -106,7 +106,7 @@ func TestCreateTokenBeforeInit(t *testing.T) {
 	}
 }
 
-func TestVerifyTokenTrue(t *testing.T) {
+func TestVerifyTrue(t *testing.T) {
 	teardown := testSetup(t)
 	defer teardown()
 
@@ -116,8 +116,8 @@ func TestVerifyTokenTrue(t *testing.T) {
 	sub := GetSubject(subIP, subID)
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	tokenString, _ := CreateToken(sub, aud, expIn)
-	s, err := VerifyToken(tokenString, aud)
+	tokenString, _ := Create(sub, aud, expIn)
+	s, err := Verify(tokenString, aud)
 	if err != nil {
 		t.Errorf("want true but got false: %v", err)
 	} else {
@@ -132,21 +132,21 @@ func TestVerifyTokenTrue(t *testing.T) {
 	}
 }
 
-func TestVerifyTokenFalse(t *testing.T) {
+func TestVerifyFalse(t *testing.T) {
 	teardown := testSetup(t)
 	defer teardown()
 
 	sub := GetSubject("127.0.0.1", "clientId")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	tokenString, _ := CreateToken(sub, aud, expIn)
+	tokenString, _ := Create(sub, aud, expIn)
 
-	if _, err := VerifyToken(tokenString+"1", aud); err == nil {
+	if _, err := Verify(tokenString+"1", aud); err == nil {
 		t.Errorf("Modified token string-want false but got true: %v", err)
 	} else {
 		log.Println(err)
 	}
-	if _, err := VerifyToken(tokenString, aud+"1"); err == nil {
+	if _, err := Verify(tokenString, aud+"1"); err == nil {
 		t.Errorf("Wrong audience-want false but got true: %v", err)
 	} else {
 		log.Println(err)
@@ -160,22 +160,22 @@ func TestTokenExpired(t *testing.T) {
 	sub := GetSubject("127.0.0.1", "clientId")
 	aud := "jwt.perme.iam.test"
 	expIn := "0.1s"
-	tokenString, _ := CreateToken(sub, aud, expIn)
+	tokenString, _ := Create(sub, aud, expIn)
 	time.Sleep(time.Second)
 
-	if _, err := VerifyToken(tokenString, aud); err == nil {
+	if _, err := Verify(tokenString, aud); err == nil {
 		t.Errorf("want false but got true: %v", err)
 	} else {
 		log.Println(err)
 	}
 }
 
-func TestVerifyTokenBeforeInit(t *testing.T) {
+func TestVerifyBeforeInit(t *testing.T) {
 	sub := GetSubject("127.0.0.1", "clientId")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	tokenString, _ := CreateToken(sub, aud, expIn)
-	_, err := VerifyToken(tokenString, aud)
+	tokenString, _ := Create(sub, aud, expIn)
+	_, err := Verify(tokenString, aud)
 	if err == nil {
 		t.Error("want error but got nothing")
 	} else {
