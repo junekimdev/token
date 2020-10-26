@@ -63,7 +63,8 @@ func issue() (string, error){
 
 func main() {
   // tokenstring from http request
-  subject, err = token.Verify(tokenstring)
+  aud := "test.aud"
+  subject, err = token.Verify(tokenstring, aud)
   if err != nil {
     log.Println(err)
   }
