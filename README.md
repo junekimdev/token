@@ -58,12 +58,12 @@ func issue() (string, error){
   sub := token.GetSubject(subIP, subID)
   aud := "test.aud"
   expIn := "1h"
-  return token.CreateToken(sub, aud, expIn)
+  return token.Create(sub, aud, expIn)
 }
 
 func main() {
   // tokenstring from http request
-  subject, err = token.VerifyToken(tokenstring)
+  subject, err = token.Verify(tokenstring)
   if err != nil {
     log.Println(err)
   }
@@ -72,7 +72,3 @@ func main() {
   // Do something with it
 }
 ```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
