@@ -134,7 +134,7 @@ func Verify(tokenString string, aud string) (sub string, err error) {
 		return pubKey, nil
 	})
 	if err != nil {
-		return "", err
+		return "", ErrInvalidToken
 	}
 
 	// Extract claims
