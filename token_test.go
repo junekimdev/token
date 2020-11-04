@@ -141,6 +141,11 @@ func TestVerifyFalse(t *testing.T) {
 	expIn := "1h"
 	tokenString, _ := Create(sub, aud, expIn)
 
+	if _, err := Verify("", aud); err == nil {
+		t.Errorf("Modified token string-want false but got true: %v", err)
+	} else {
+		log.Println(err)
+	}
 	if _, err := Verify(tokenString+"1", aud); err == nil {
 		t.Errorf("Modified token string-want false but got true: %v", err)
 	} else {

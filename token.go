@@ -133,6 +133,9 @@ func Verify(tokenString string, aud string) (sub string, err error) {
 	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return pubKey, nil
 	})
+	if err != nil {
+		return "", err
+	}
 
 	// Extract claims
 	claims := token.Claims.(*jwt.StandardClaims)
