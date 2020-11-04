@@ -149,12 +149,12 @@ func Verify(tokenString string, aud string) (sub string, err error) {
 }
 
 // GetSubject returns properly formatted subject that perme micro-services can understand
-func GetSubject(ip string, userID string) string {
-	return ip + TokenSubjectDelimiter + userID
+func GetSubject(userID, deviceID string) string {
+	return userID + TokenSubjectDelimiter + deviceID
 }
 
 // ParseSubject parses subject and returns ip and user id
-func ParseSubject(sub string) (ip string, userID string) {
+func ParseSubject(sub string) (userID, deviceID string) {
 	subs := strings.Split(sub, TokenSubjectDelimiter)
 	return subs[0], subs[1]
 }
