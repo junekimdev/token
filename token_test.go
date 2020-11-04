@@ -85,7 +85,7 @@ func TestCreate(t *testing.T) {
 	teardown := testSetup(t)
 	defer teardown()
 
-	sub := GetSubject("127.0.0.1", "clientId")
+	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
 	_, err := Create(sub, aud, expIn)
@@ -95,7 +95,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestCreateBeforeInit(t *testing.T) {
-	sub := GetSubject("127.0.0.1", "clientId")
+	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
 	_, err := Create(sub, aud, expIn)
@@ -110,10 +110,10 @@ func TestVerifyTrue(t *testing.T) {
 	teardown := testSetup(t)
 	defer teardown()
 
-	subIP := "127.0.0.1"
-	subID := "clientId"
+	testID := "clientId"
+	devID := "127.0.0.1"
 
-	sub := GetSubject(subIP, subID)
+	sub := GetSubject(testID, devID)
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
 	tokenString, _ := Create(sub, aud, expIn)
@@ -123,11 +123,11 @@ func TestVerifyTrue(t *testing.T) {
 	} else {
 		log.Printf("Token subjected to: %s\n", s)
 	}
-	ip, id := ParseSubject(s)
-	if ip != subIP {
+	id, dev := ParseSubject(s)
+	if id != testID {
 		t.Error("Failed to parse subject")
 	}
-	if id != subID {
+	if dev != devID {
 		t.Error("Failed to parse subject")
 	}
 }
@@ -136,7 +136,7 @@ func TestVerifyFalse(t *testing.T) {
 	teardown := testSetup(t)
 	defer teardown()
 
-	sub := GetSubject("127.0.0.1", "clientId")
+	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
 	tokenString, _ := Create(sub, aud, expIn)
@@ -162,7 +162,7 @@ func TestTokenExpired(t *testing.T) {
 	teardown := testSetup(t)
 	defer teardown()
 
-	sub := GetSubject("127.0.0.1", "clientId")
+	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "0.1s"
 	tokenString, _ := Create(sub, aud, expIn)
@@ -176,7 +176,7 @@ func TestTokenExpired(t *testing.T) {
 }
 
 func TestVerifyBeforeInit(t *testing.T) {
-	sub := GetSubject("127.0.0.1", "clientId")
+	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
 	tokenString, _ := Create(sub, aud, expIn)

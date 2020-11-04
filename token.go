@@ -153,7 +153,7 @@ func GetSubject(userID, deviceID string) string {
 	return userID + TokenSubjectDelimiter + deviceID
 }
 
-// ParseSubject parses subject and returns ip and user id
+// ParseSubject parses subject and returns user id and device id
 func ParseSubject(sub string) (userID, deviceID string) {
 	subs := strings.Split(sub, TokenSubjectDelimiter)
 	return subs[0], subs[1]
