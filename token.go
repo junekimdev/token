@@ -83,26 +83,27 @@ func getPublicKey(filepath string) (interface{}, error) {
 	return x509.ParsePKCS1PublicKey(keyPem.Bytes)
 }
 
-// Create creates JWT signed token string
+// Create outputs JWT signed token string, expiration timestamp, and errors
 //
 // "expIn" is a string as in time.ParseDuration: e.g. 1h, 10m, 1.5s, -300ms, 1h20m
-func Create(sub, aud, expIn string) (string, error) {
+func Create(sub, aud, expIn string) (string, int64, error) {
 	// Check private key
 	if prvKey == nil {
-		return "", ErrPrvKeyNotInitiated
+		return "", 0, ErrPrvKeyNotInitiated
 	}
 
 	// Get Expiration time
 	tDelta, err := time.ParseDuration(expIn)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	// Create claims
 	now := time.Now()
+	expAt := now.Add(tDelta).Unix()
 	claims := jwt.StandardClaims{
 		Audience:  aud,
-		ExpiresAt: now.Add(tDelta).Unix(),
+		ExpiresAt: expAt,
 		Id:        uuid.New().String(),
 		IssuedAt:  now.Unix(),
 		Issuer:    TokenIssuer,
@@ -116,10 +117,10 @@ func Create(sub, aud, expIn string) (string, error) {
 	// Sign the token with the key
 	signedToken, err := token.SignedString(prvKey)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
-	return signedToken, nil
+	return signedToken, expAt, nil
 }
 
 // Verify parses/verifies JWT and returns subject

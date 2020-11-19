@@ -88,7 +88,7 @@ func TestCreate(t *testing.T) {
 	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	_, err := Create(sub, aud, expIn)
+	_, _, err := Create(sub, aud, expIn)
 	if err != nil {
 		t.Errorf("Failed to create Token: %v", err)
 	}
@@ -98,7 +98,7 @@ func TestCreateBeforeInit(t *testing.T) {
 	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	_, err := Create(sub, aud, expIn)
+	_, _, err := Create(sub, aud, expIn)
 	if err == nil {
 		t.Error("want error but got nothing")
 	} else {
@@ -116,7 +116,7 @@ func TestVerifyTrue(t *testing.T) {
 	sub := GetSubject(testID, devID)
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	tokenString, _ := Create(sub, aud, expIn)
+	tokenString, _, _ := Create(sub, aud, expIn)
 	s, err := Verify(tokenString, aud)
 	if err != nil {
 		t.Errorf("want true but got false: %v", err)
@@ -139,7 +139,7 @@ func TestVerifyFalse(t *testing.T) {
 	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	tokenString, _ := Create(sub, aud, expIn)
+	tokenString, _, _ := Create(sub, aud, expIn)
 
 	if _, err := Verify("", aud); err == nil {
 		t.Errorf("Modified token string-want false but got true: %v", err)
@@ -165,7 +165,7 @@ func TestTokenExpired(t *testing.T) {
 	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "0.1s"
-	tokenString, _ := Create(sub, aud, expIn)
+	tokenString, _, _ := Create(sub, aud, expIn)
 	time.Sleep(time.Second)
 
 	if _, err := Verify(tokenString, aud); err == nil {
@@ -179,7 +179,7 @@ func TestVerifyBeforeInit(t *testing.T) {
 	sub := GetSubject("clientId", "127.0.0.1")
 	aud := "jwt.perme.iam.test"
 	expIn := "1h"
-	tokenString, _ := Create(sub, aud, expIn)
+	tokenString, _, _ := Create(sub, aud, expIn)
 	_, err := Verify(tokenString, aud)
 	if err == nil {
 		t.Error("want error but got nothing")

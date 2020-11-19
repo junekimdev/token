@@ -51,7 +51,7 @@ func init(){
   }
 }
 
-func issue() (string, error){
+func issue() (string, int64, error){
   subIP := "127.0.0.1"
   subID := "clientId"
 
