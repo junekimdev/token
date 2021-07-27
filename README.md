@@ -1,6 +1,6 @@
 # Token
 
-JSON Web Token Interface built on top of jwt-go
+JSON Web Token Interface built on top of golang-jwt
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/JuneKimDev/token)](https://pkg.go.dev/github.com/JuneKimDev/token)
 [![Go Report Card](https://goreportcard.com/badge/github.com/JuneKimDev/token)](https://goreportcard.com/report/github.com/JuneKimDev/token)
